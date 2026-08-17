@@ -1,79 +1,116 @@
-# Hammami Hub
+# Hammami Hub: Wellness Center Booking & Customer Loyalty Android App
 
-An Android application for wellness centers designed to streamline booking, reward loyal customers, and drive user engagement.
+[![Kotlin](https://img.shields.io/badge/Kotlin-Native%20Android-7F52FF.svg?style=flat&logo=kotlin&logoColor=white)](https://kotlinlang.org/)
+[![Architecture](https://img.shields.io/badge/Architecture-Clean%20%2B%20MVVM-blue.svg?style=flat)]()
+[![Firebase](https://img.shields.io/badge/Backend-Google%20Firebase-FFCA28.svg?style=flat&logo=firebase&logoColor=black)](https://firebase.google.com/)
+[![Material 3](https://img.shields.io/badge/UI-Material%20Design%203-green.svg?style=flat)]()
+[![Dagger Hilt](https://img.shields.io/badge/DI-Dagger%20Hilt-orange.svg?style=flat)]()
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat)](LICENSE)
 
-## The Problem & Vision
-
-**The Problem:** Traditional wellness centers often rely on slow, manual booking processes (phone calls, paper agendas) and lack digital tools to foster customer retention. Customers want an immediate way to view availability, pay, and get rewarded for their loyalty without friction.
-
-**The Solution:** Hammami Hub digitizes the entire customer journey. Targeting a broad demographic (ages 18-70), the app follows a strict *"walk-up-and-use"* design philosophy. By combining a frictionless booking system with an automated reward logic, it reduces the administrative burden on the staff and incentivizes customers to return and spend more flexibly.
-
-## Product Development Lifecycle
-
-This project was built following a strict Product Design and Software Engineering pipeline:
-
-1. **User Research:** Conducted initial surveys and created *Personas* to understand the technical literacy and needs of both the customers (end-users) and the staff (secretaries, directors).
-2. **Competitor Analysis:** Benchmarked existing wellness apps (e.g., Dahara, Centro Benessere Colle) to identify missing key features like integrated payments, reward points, and built-in reviews.
-3. **Prototyping & Design:** Engineered an interactive mockup using **Figma**, fully adhering to **Material Design 3** guidelines and applying mobile design patterns to ensure an intuitive interface for low-tech individuals.
-4. **Development:** Implementation of the complete native app in a native Android environment.
-
-## Core Features
-
-* **Real-time Catalog & Booking:** Browse services (Aesthetics, Wellness, Massages), view detailed descriptions, pricing, duration, and dynamically book available slots.
-* **Reward System (Karma Points):** Users earn Karma Points based on their spending, which can be accumulated to redeem exclusive **Coupons** usable directly at checkout.
-* **Gift Cards Engine:** Purchase and send digital Gift Cards natively within the app.
-* **Digital Profile & Firebase Auth:** Seamless login, profile editing, and secure data synchronization via the cloud.
-* **Review System:** Integrated system to leave feedback on completed appointments.
-
-## Architecture & Tech Stack
-
-The application has been engineered to meet modern enterprise-grade Android standards:
-
-* **Language:** `Kotlin`
-* **Architecture:** **MVVM (Model-View-ViewModel)** with **Clean Architecture** principles (Data, Domain, Presentation layers).
-* **Dependency Injection:** `Dagger Hilt` for robust component scoping and modularity.
-* **Backend as a Service:** `Google Firebase` 
-  * *Firestore* (NoSQL Database for Treatments, Bookings, Users, Coupons)
-  * *Authentication* (Secure login pipeline)
-  * *Storage* (Media hosting)
-* **Concurrency:** `Kotlin Coroutines`
-* **UI Design:** `View/Data Binding` and `Material Design 3`
-* **Error Handling:** Custom Result wrappers mapping domain logic over Firebase Exceptions.
-
-## Information Architecture & Navigation Map
-
-Before development, the entire navigation architecture was mapped out to ensure a logical and intuitive user experience. The following diagram illustrates the main navigation flows from a customer's perspective.
-
-![App Navigation Map](media/navigation-map.png)
-
-## UI & Design 
-Here are the finalized UI screens designed with Material Design 3 guidelines:
-
-**Home Dashboard**  
-![Home Dashboard](media/home%20dashboard%20page.png)
-
-**Services Catalog**  
-![Services](media/services%20page.png)
-
-**Service Detail**  
-![Service Detail](media/service%20detail%20page.png)
-
-**Booking Calendar**  
-![Booking Calendar](media/booking-calendar%20page.png)
-
-**Checkout / Payment**  
-![Payment](media/payment%20page.png)
-
-**Reward Coupons**  
-![Coupon](media/coupon%20page.png)
-
-## Assets & Documentation
-
-Deep dive into the engineering and design process:
-
-* **Interactive Mockup:** [View on Figma](https://www.figma.com/design/7mJzNG0WF3RerFoHGTPknW/Material-3-Design-Kit--Community-?node-id=55908-54774&t=YZoReQabeNy1w2rK-1)
-* **Project Slides:** [slide-presentazione-hammami.pdf](./slide-presentazione-hammami.pdf)
-* **Technical Report:** [relazione-hammami.pdf](./relazione-hammami.pdf)
+> A production-ready native Android application engineered to digitize the entire booking and customer loyalty lifecycle for wellness centers, built on **Clean Architecture**, **MVVM**, and **Google Firebase**.
 
 ---
-*Created by Nicholas Dumas & Matteo Rossini*
+
+## 📖 Overview & Business Value
+
+Traditional wellness and spa facilities often rely on manual, friction-heavy booking processes (phone calls, paper calendars) and lack automated customer retention tools.
+
+**Hammami Hub** bridges this gap through a frictionless, *"walk-up-and-use"* mobile experience:
+- **Instant Slot Booking:** Real-time visibility into treatments, staff availability, and immediate checkout.
+- **Automated Retention Engine:** Customers earn **Karma Points** proportional to spending, which convert into redeemable coupons and digital gift cards directly at checkout.
+- **Administrative Relief:** Real-time synchronization eliminates double-booking errors and reduces phone inquiries.
+
+---
+
+## 🏛️ System Architecture
+
+The application is structured into distinct, modular layers following **Clean Architecture** to ensure testability and high cohesion:
+
+```mermaid
+graph TD
+    subgraph UI ["Presentation Layer (MVVM & Material 3)"]
+        Views["Activities & Fragments<br/>(ViewBinding, Material Design 3)"]
+        VMs["ViewModels<br/>(Coroutines, StateFlow)"]
+        Views -->|Observes State| VMs
+    end
+
+    subgraph Domain ["Domain Layer (Business Logic)"]
+        UC1["BookTreatmentUseCase"]
+        UC2["RedeemKarmaPointsUseCase"]
+        UC3["ManageGiftCardsUseCase"]
+        VMs --> UC1
+        VMs --> UC2
+        VMs --> UC3
+    end
+
+    subgraph Data ["Data Layer & Cloud Backend"]
+        Repo["WellnessRepositoryImpl"]
+        UC1 --> Repo
+        UC2 --> Repo
+        UC3 --> Repo
+        
+        subgraph Firebase ["Google Firebase Cloud Platform"]
+            Firestore[("Cloud Firestore<br/>(NoSQL DB: Treatments, Bookings, Users, Coupons)")]
+            Auth["Firebase Authentication<br/>(Secure Session Management)"]
+            Storage["Firebase Storage<br/>(Media & Service Assets)"]
+        end
+
+        Repo --> Firestore
+        Repo --> Auth
+        Repo --> Storage
+    end
+```
+
+---
+
+## ✨ Core Features
+
+1. **Live Services Catalog:** Filter treatments by category (Aesthetics, Massages, Holistic Care), with duration, pricing, and practitioner details.
+2. **Dynamic Karma Points Loyalty System:** Automated point accrual per booking, redeemable for discount vouchers.
+3. **In-App Digital Gift Cards:** Purchase, customize, and transfer electronic gift cards natively.
+4. **Secure User Profile & History:** Access upcoming appointments, past treatment notes, and invoices.
+5. **Verified Customer Feedback:** Transparent review engine after completed appointments.
+
+---
+
+## 📱 UI & Screen Showcase
+
+| Home Dashboard | Services Catalog | Service Details |
+| :---: | :---: | :---: |
+| <img src="media/home%20dashboard%20page.png" width="260" alt="Home Dashboard" /> | <img src="media/services%20page.png" width="260" alt="Services Page" /> | <img src="media/service%20detail%20page.png" width="260" alt="Service Detail" /> |
+
+### Navigation Architecture Map
+<p align="center">
+  <img src="media/navigation-map.png" width="750" alt="Application Navigation Flow" />
+</p>
+
+---
+
+## 🛠️ Tech Stack
+
+- **Language:** Kotlin
+- **Architecture:** Clean Architecture (Data, Domain, Presentation) + MVVM
+- **Dependency Injection:** Dagger Hilt
+- **Backend as a Service:** Google Firebase (Cloud Firestore, Authentication, Cloud Storage)
+- **Asynchrony:** Kotlin Coroutines
+- **UI Framework:** Android ViewBinding, XML Layouts, Material Design 3
+- **Error Handling:** Custom Result/Either sealed classes wrapping Firebase network exceptions
+
+---
+
+## 🚀 Setup & Local Execution
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/hidemet/hammami-wellness-app.git
+   cd hammami-wellness-app
+   ```
+2. Open the project in **Android Studio**.
+3. Place your `google-services.json` file inside the `app/` directory (or use the provided sandbox config).
+4. Build and run on an Android emulator or device (Min SDK 26, Target SDK 34).
+
+---
+
+## 📄 License
+
+Released under the [MIT License](LICENSE).
